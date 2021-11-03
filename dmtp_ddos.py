@@ -176,6 +176,19 @@ def check_state():
                     + str(expected_emails)
                     + " emails found."
                 )
+                if i < 50:
+                    print(
+                        "This user was tested by sending DMTP directly to the MailboxServer"
+                    )
+                elif i < 100:
+                    print(
+                        "This user was tested by sending DMTP through the TransferServer"
+                    )
+                else:
+                    print(
+                        "This user was tested by sending DMTP through the TransferServer and generating a error mail."
+                    )
+
                 exit(1337)
 
         if "ok" in sr.readline():
