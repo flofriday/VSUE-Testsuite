@@ -35,7 +35,7 @@ def send_nn_messages(dmtp_port, fr0m, to, subject="sub", data="d", log=False):
             print(cmd)
         sw.write(cmd + "\n")
 
-    for i in range(mails_per_connection):
+    for _ in range(mails_per_connection):
         send("begin")
         send("from " + fr0m)
         send("to " + to)
@@ -50,66 +50,69 @@ def send_nn_messages(dmtp_port, fr0m, to, subject="sub", data="d", log=False):
 
 
 def send_mailbox_mails():
-    def process_half():
-        for i in range(num_connections_per_trial // 2):
-            # the first 2 recipients are valid
-            send_nn_messages(
-                mailbox_port,
-                "senderdoesntmatterhere@whatever",
-                (
-                    str(i % (num_users // 3))
-                    + "@univer.ze,"
-                    + str((i + 1) % (num_users // 3))
-                    + "@univer.ze,"
-                    "idontexist@otherserver"
-                ),
-            )
-
-    p1 = Process(target=process_half)
-    p2 = Process(target=process_half)
+    p1 = Process(target=send_mailbox_mails_part)
+    p2 = Process(target=send_mailbox_mails_part)
     p1.start()
     p2.start()
     p1.join()
     p2.join()
+
+
+def send_mailbox_mails_part():
+    for i in range(num_connections_per_trial // 2):
+        # the first 2 recipients are valid
+        send_nn_messages(
+            mailbox_port,
+            "senderdoesntmatterhere@whatever",
+            (
+                str(i % (num_users // 3))
+                + "@univer.ze,"
+                + str((i + 1) % (num_users // 3))
+                + "@univer.ze,"
+                "idontexist@otherserver"
+            ),
+        )
 
 
 def send_transfer_working():
-    def process_half():
-        for i in range(num_connections_per_trial // 2):
-            send_nn_messages(
-                transfer_port,
-                "zaphod@univer.ze",
-                (
-                    str((num_users // 3) + i % (num_users // 3))
-                    + "@univer.ze,"
-                    + str((num_users // 3) + (i + 1) % (num_users // 3))
-                    + "@univer.ze"
-                ),
-            )
-
-    p1 = Process(target=process_half)
-    p2 = Process(target=process_half)
+    p1 = Process(target=send_transfer_working_part)
+    p2 = Process(target=send_transfer_working_part)
     p1.start()
     p2.start()
     p1.join()
     p2.join()
+
+
+def send_transfer_working_part():
+    for i in range(num_connections_per_trial // 2):
+        send_nn_messages(
+            transfer_port,
+            "zaphod@univer.ze",
+            (
+                str((num_users // 3) + i % (num_users // 3))
+                + "@univer.ze,"
+                + str((num_users // 3) + (i + 1) % (num_users // 3))
+                + "@univer.ze"
+            ),
+        )
 
 
 def send_transfer_error():
-    def process_half():
-        for i in range(num_connections_per_trial // 2):
-            send_nn_messages(
-                transfer_port,
-                str(num_users // 3 * 2 + i % (num_users // 3)) + "@univer.ze",
-                "therecipientserver@doesnotexist",
-            )
-
-    p1 = Process(target=process_half)
-    p2 = Process(target=process_half)
+    p1 = Process(target=send_transfer_error_part)
+    p2 = Process(target=send_transfer_error_part)
     p1.start()
     p2.start()
     p1.join()
     p2.join()
+
+
+def send_transfer_error_part():
+    for i in range(num_connections_per_trial // 2):
+        send_nn_messages(
+            transfer_port,
+            str(num_users // 3 * 2 + i % (num_users // 3)) + "@univer.ze",
+            "therecipientserver@doesnotexist",
+        )
 
 
 def check_state():
