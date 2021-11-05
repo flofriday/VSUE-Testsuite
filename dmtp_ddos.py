@@ -6,7 +6,7 @@ import time
 
 # this line will intentionally crash so you remember to enter your port range
 # e.g. 10080 if ports 10080-10089 have been assigned to you and configured in the application
-port_range = 10840
+port_range = 1xxxx0
 
 mailbox_port = port_range + 4
 transfer_port = port_range + 0
