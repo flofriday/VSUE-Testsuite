@@ -128,7 +128,7 @@ def check_state():
     host = socket.gethostname()
     s.connect((host, dmap_port))
 
-    assert "ok DMAP" in sr.readline()
+    assert sr.readline().startswith("ok DMAP")
 
     def send(cmd):
         sw.write(cmd + "\n")
@@ -152,7 +152,7 @@ def check_state():
             )
 
         send("login " + str(i) + " p")
-        assert "ok" in sr.readline()
+        assert sr.readline().startswith("ok")
         print(
             "Expecting user "
             + str(i)
@@ -166,7 +166,7 @@ def check_state():
         send("logout")
         for j in range(expected_emails):
             line = sr.readline()
-            if (("ok" in line) and (len(line) < 4)):
+            if (line.startswith("ok"):
                 print(
                     "Probably not enough emails for user "
                     + str(i)
@@ -191,7 +191,7 @@ def check_state():
 
                 exit(1337)
 
-        if "ok" in sr.readline():
+        if sr.readline().startswith("ok"):
             print(" - ok")
         else:
             print("There may be too many emails for user with id " + str(i))
