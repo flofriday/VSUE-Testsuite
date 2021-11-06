@@ -2,6 +2,7 @@
 from multiprocessing import Process
 import socket
 import time
+import sys
 
 
 # this line will intentionally crash so you remember to enter your port range
@@ -65,10 +66,8 @@ def send_mailbox_mails_part():
             mailbox_port,
             "senderdoesntmatterhere@whatever",
             (
-                str(i % (num_users // 3))
-                + "@univer.ze,"
-                + str((i + 1) % (num_users // 3))
-                + "@univer.ze,"
+                f"{i % (num_users // 3)}@univer.ze,"
+                f"{(i + 1) % (num_users // 3)}@univer.ze,"
                 "idontexist@otherserver"
             ),
         )
@@ -89,10 +88,8 @@ def send_transfer_working_part():
             transfer_port,
             "zaphod@univer.ze",
             (
-                str((num_users // 3) + i % (num_users // 3))
-                + "@univer.ze,"
-                + str((num_users // 3) + (i + 1) % (num_users // 3))
-                + "@univer.ze"
+                f"{(num_users // 3) + i % (num_users // 3)}@univer.ze,"
+                f"{(num_users // 3) + (i + 1) % (num_users // 3)}@univer.ze"
             ),
         )
 
@@ -110,7 +107,7 @@ def send_transfer_error_part():
     for i in range(num_connections_per_trial // 2):
         send_nn_messages(
             transfer_port,
-            str(num_users // 3 * 2 + i % (num_users // 3)) + "@univer.ze",
+            f"{num_users // 3 * 2 + i % (num_users // 3)}@univer.ze",
             "therecipientserver@doesnotexist",
         )
 
@@ -154,13 +151,7 @@ def check_state():
         send("login " + str(i) + " p")
         assert sr.readline().startswith("ok")
         print(
-            "Expecting user "
-            + str(i)
-            + "/"
-            + str(num_users)
-            + " to have "
-            + str(expected_emails)
-            + " emails."
+            f"Expecting user {i}/{num_users} to have {expected_emails} emails." 
         )
         send("list")
         send("logout")
@@ -168,13 +159,8 @@ def check_state():
             line = sr.readline()
             if line.startswith("ok"):
                 print(
-                    "Probably not enough emails for user "
-                    + str(i)
-                    + ". Only "
-                    + str(j)
-                    + " out of "
-                    + str(expected_emails)
-                    + " emails found."
+                    f"Probably not enough emails for user {i}."
+                    f"Only {j} out of {expected_emails} emails found."
                 )
                 if i < 50:
                     print(
@@ -218,10 +204,14 @@ if __name__ == "__main__":
     p2.join()
     p3.join()
 
-    print("Done. Waiting a bit for things to settle down.")
-    time.sleep(5)
-    print("(trust me, your servers probably need it)")
-    time.sleep(5)
+    if len(sys.argv) > 1 and sys.argv[1] == "--skip-wait":
+        print("Skipping wait.")
+    else:
+        print("Done. Waiting a bit for things to settle down.")
+        print("You can skip this with the flag --skip-wait")
+        time.sleep(5)
+        print("(trust me, your servers probably need it)")
+        time.sleep(5)
 
     check_state()
 
