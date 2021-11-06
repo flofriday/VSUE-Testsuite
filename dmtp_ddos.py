@@ -166,7 +166,7 @@ def check_state():
         send("logout")
         for j in range(expected_emails):
             line = sr.readline()
-            if (line.startswith("ok"):
+            if line.startswith("ok"):
                 print(
                     "Probably not enough emails for user "
                     + str(i)
