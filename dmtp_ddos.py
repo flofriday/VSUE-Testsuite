@@ -64,11 +64,11 @@ def send_mailbox_mails_part():
         # the first 2 recipients are valid
         send_nn_messages(
             mailbox_port,
-            "senderdoesntmatterhere@whatever",
+            "senderdoesntmatterhere@whatever.com",
             (
                 f"{i % (num_users // 3)}@univer.ze,"
                 f"{(i + 1) % (num_users // 3)}@univer.ze,"
-                "idontexist@otherserver"
+                "idontexist@otherserver.com"
             ),
         )
 
@@ -108,7 +108,7 @@ def send_transfer_error_part():
         send_nn_messages(
             transfer_port,
             f"{num_users // 3 * 2 + i % (num_users // 3)}@univer.ze",
-            "therecipientserver@doesnotexist",
+            "therecipientserver@doesnotexist.com",
         )
 
 
